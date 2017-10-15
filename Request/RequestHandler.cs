@@ -90,6 +90,23 @@ namespace UnpackMe.SDK.Core.Request
             return data.Content.ReadAsFileAsync(filename);
         }
 
+        public byte[] GetIntoByteArray(string path)
+        {
+            Task<byte[]> task = GetIntoByteArrayAsync(path);
+            task.Wait();
+            return task.Result;
+        }
+
+        public Task<byte[]> GetIntoByteArrayAsync(string path)
+        {
+            var data = _client.GetAsync(String.Format("{0}{1}", _serviceUrl, path)).Result;
+            if (data.StatusCode != HttpStatusCode.OK)
+            {
+                GuardAgainstInvalidStatus(data.StatusCode, data.Content.ReadAsStringAsync().Result);
+            }
+            return data.Content.ReadAsByteArrayAsync();
+        }
+
         public void SetToken(string token)
         {
             _client.DefaultRequestHeaders.Remove("Token");
