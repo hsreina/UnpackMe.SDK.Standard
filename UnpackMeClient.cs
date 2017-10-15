@@ -61,6 +61,11 @@ namespace UnpackMe.SDK.Core
             _requesthandler.GetIntoFile(String.Format("/task/{0}/download", taskId), filename);
         }
 
+        public byte[] DownloadToByteArray(string taskId)
+        {
+            return _requesthandler.GetIntoByteArray(String.Format("/task/{0}/download", taskId));
+        }
+
         public void Dispose()
         {
             _requesthandler.Dispose();
