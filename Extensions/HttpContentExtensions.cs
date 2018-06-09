@@ -9,24 +9,9 @@ namespace UnpackMe.SDK.Core.Extensions
         public static Task ReadAsFileAsync(this HttpContent content, string filename)
         {
             string pathname = Path.GetFullPath(filename);
-
-            FileStream fileStream = null;
-
-            try
+            using (var fileStream = new FileStream(pathname, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                fileStream = new FileStream(pathname, FileMode.Create, FileAccess.Write, FileShare.None);
-                return
-                    content.CopyToAsync(fileStream).ContinueWith((copyTask) => {
-                        fileStream.Dispose();
-                    });
-            }
-            catch
-            {
-                if (fileStream != null)
-                {
-                    fileStream.Dispose();
-                }
-                throw;
+                return content.CopyToAsync(fileStream).ContinueWith((copyTask) => { fileStream.Dispose(); });
             }
         }
     }
